@@ -1,4 +1,4 @@
-import requests, url_list
+import requests, url_list, json
 from bs4 import BeautifulSoup
 
 class AutoSurScraper:
@@ -69,18 +69,17 @@ class AutoSurScraper:
                 break
         return urls
 
+def save_to_json(data, filename):
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
 base_url = url_list.autosur_base_url
-inicio = 49
-incremento = 48
+inicio = 0
+incremento = 49
 max_paginas = 100
 
 scraper = AutoSurScraper(base_url, inicio, incremento, max_paginas)
-page_data = scraper.scrape_all_pages()
+products = scraper.scrape_all_pages()
 
-for url, products in page_data:
-    print(f"Productos de la página: {url}")
-    for product in products:
-        print(f"Nombre: {product['name']}")
-        print(f"Precio: {product['price']}")
-        print(f"Descripción: {', '.join(product['description'])}")
-        print('---')
+output_filename = 'productos_autosur.json'
+save_to_json(products, output_filename)

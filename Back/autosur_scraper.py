@@ -2,11 +2,11 @@ import requests, url_list, json
 from bs4 import BeautifulSoup
 
 class AutoSurScraper:
-    def __init__(self, base_url, inicio, incremento, max_paginas):
+    def __init__(self, base_url, start, increment, max_pag):
         self.base_url = base_url
-        self.inicio = inicio
-        self.incremento = incremento
-        self.max_paginas = max_paginas
+        self.start = start
+        self.increment = increment
+        self.max_pag = max_pag
 
     def get_page_request(self, url):
         try:
@@ -33,24 +33,28 @@ class AutoSurScraper:
                     name_tag = product.find('h2', class_="poly-box")
                     price_tag = product.find('span', class_="andes-money-amount andes-money-amount--cents-superscript")
                     description_tags = product.find_all('li', class_='poly-attributes-list__item poly-attributes-list__bar')
-
-                    if name_tag and price_tag:
+                    img_tag = product.find('img')
+                    
+                    if name_tag and price_tag and img_tag:
                         name = name_tag.text.strip()
                         price = price_tag.text.strip()
                         description = [tag.text.strip() for tag in description_tags]
-
+                        img_url = img_tag.get('src')
+                        
                         product_data = {
                             'name': name,
                             'price': price,
-                            'description': description
+                            'description': description,
+                            'image_url': img_url
                         }
+                        
                         products_list.append(product_data)
         return products_list
 
     def scrape_all_pages(self):
         urls = []
-        for i in range(self.max_paginas):
-            url = self.base_url.format(self.inicio + i * self.incremento)
+        for i in range(self.max_pag):
+            url = self.base_url.format(self.start + i * self.increment)
             response = self.get_page_request(url)
             if response and response.status_code == 200:
                 content = self.get_content_autosur(response)
@@ -81,5 +85,5 @@ max_paginas = 100
 scraper = AutoSurScraper(base_url, inicio, incremento, max_paginas)
 products = scraper.scrape_all_pages()
 
-output_filename = 'productos_autosur.json'
+output_filename = 'products_autosur.json'
 save_to_json(products, output_filename)

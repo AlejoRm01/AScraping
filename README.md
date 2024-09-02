@@ -8,3 +8,8 @@ Recordar instalar las librerias pip install <lib>
 
 requests
 beautifulsoup4
+pandas
+numpy
+selenium
+undetected_chromedriver
+setuptools

@@ -85,5 +85,5 @@ max_paginas = 100
 scraper = AutoSurScraper(base_url, inicio, incremento, max_paginas)
 products = scraper.scrape_all_pages()
 
-output_filename = 'products_autosur.json'
+output_filename = 'json/products_autosur.json'
 save_to_json(products, output_filename)
